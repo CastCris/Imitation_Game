@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SPO Games - SPA</title>
+    <style>
+body{
+    min-height:100vh;
+
+    background:
+    linear-gradient(
+        180deg,
+        #f8fbff 0%,
+        #eef7ff 100%
+    );
+
+    color:#111827;
+
+    font-family:
+    "Segoe UI",
+    sans-serif;
+}
+
+nav{
+    position:sticky;
+    top:0;
+
+    display:flex;
+    justify-content:center;
+    gap:15px;
+
+    padding:16px;
+
+    background:white;
+
+    border-bottom:1px solid #e4e7ec;
+
+    box-shadow:
+    0 2px 10px rgba(0,0,0,.05);
+
+    z-index:100;
+}
+
+nav a{
+    text-decoration:none;
+
+    color:#344054;
+
+    font-weight:600;
+
+    padding:10px 18px;
+
+    border-radius:10px;
+
+    transition:.2s;
+}
+
+nav a:hover{
+    background:#eaf4ff;
+    color:#0084ff;
+}
+
+.button_pushcase,
+.button_remove{
+
+    width:100%;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:12px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        180deg,
+        #2bb8ff,
+        #0084ff
+    );
+
+    transition:.2s;
+}
+
+.button_pushcase:hover,
+.button_remove:hover{
+    filter:brightness(1.08);
+}
+
+/* CATÁLOGO */
+
+.catalog_grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:24px;
+}
+
+/* CARD */
+
+.card_game{
+
+    background:white;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    box-shadow:
+    0 4px 15px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+    display:flex;
+    flex-direction:column;
+}
+
+.card_game:hover{
+    transform:translateY(-5px);
+
+    box-shadow:
+    0 12px 25px rgba(0,0,0,.12);
+}
+
+.card_game_infos{
+    padding:18px;
+}
+
+.card_game_infos h1{
+    font-size:1.2rem;
+    margin-bottom:8px;
+    color:#1d2939;
+}
+
+.card_game_infos h4{
+    color:#667085;
+    margin-bottom:4px;
+}
+
+.card_game img{
+    width:100%;
+    height:320px;
+    object-fit:cover;
+    display:block;
+}
+
+.card_game_actions{
+    padding:18px;
+    margin-top:auto;
+}
+
+/* LISTA DO CARRINHO */
+
+.card_game_list{
+    display:flex;
+    align-items:center;
+    gap:20px;
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,.08);
+}
+
+.card_game_list img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:12px;
+}
+    </style>
+</head>
+<body>
+    <div class="toast-container" id="toastContainer"></div>
+    <nav>
+        <a href="#home">Início</a>
+        <a href="#catalogo">Catálogo de Jogos</a>
+        <a href="#carrinho">Carrinho</a>
+    </nav>
+    <main id="conteudo">
+    </main>
+    <script>
+        // Global Vars
+        const bancoDeJogos = [
+            {
+                id: 1,
+                titulo: "Resident Evil 4 Remake",
+                genero: "Terror/Ação",
+                preco: "199,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic0.gamerantimages.com%2Fwordpress%2Fwp-content%2Fuploads%2F2023%2F01%2Fresident-evil-4-remake.jpg&f=1&nofb=1&ipt=c7303e5356d8d8d18ddec54b757a6b52c3da67912d85ce978be2e63e9d2c6539"
+            },
+            {
+                id: 2,
+                titulo: "Persona 3 Reload",
+                genero: "RPG",
+                preco: "349,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic1.srcdn.com%2Fwordpress%2Fwp-content%2Fuploads%2Fsharedimages%2F2024%2F04%2Fpersona-3-reload.jpg&f=1&nofb=1&ipt=575b132db51565ca95fdab19e61facbbb420f2ecc1c872b592f6287f2825523c"
+            },
+            {
+                id: 3,
+                titulo: "EA Sports FC 24",
+                genero: "Esporte",
+                preco: "250,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperaccess.com%2Ffull%2F10482383.jpg&f=1&nofb=1&ipt=c7aa93fd36162fb3a053b8b4f54669d80186a226c3690e9651a289df813f8683"
+            },
+            {
+                id: 4,
+                titulo: "Minecraft BedRock&Java Edition",
+                genero: "Aventura",
+                preco: "150,00",
+                img_src: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg"
+            },
+            {
+                id: 5,
+                titulo: "Civilization VI",
+                genero: "Estratégia 4X",
+                preco: "129,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets-prd.ignimgs.com%2F2021%2F12%2F14%2Fciv6-1639520169673.jpg&f=1&nofb=1&ipt=83ad109f401a78bc18c18e261a51ecdaa42889d131c185842b1610e5b173057f"
+            },
+            {
+                id: 6,
+                titulo: "Titanfall 2",
+                genero: "Combate",
+                preco: "89,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthfvnext.bing.com%2Fth%2Fid%2FOIP.3YmIEFaS_xwS5tNXyuQzBwHaHa%3Fcb%3Dthfvnextfalcon2%26pid%3DApi&f=1&ipt=2b9188fd5d8c638d8fc77dbaf5ea82e87f6aa5e16ef35673dd58ef1d7b448eb8&ipo=images"
+            },
+            {
+                id: 7,
+                titulo: "Dead Cells",
+                genero: "Roguelike",
+                preco: "47,50",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets1.ignimgs.com%2F2019%2F06%2F10%2Fdead-cells---button-fin-1560125633132.jpg%3Ffit%3Dbounds%26dpr%3D1%26quality%3D75%26width%3D188px&f=1&nofb=1&ipt=6525931204bacd424d916437f78418080e2cf2f78377c944c9e2159958961fd4"
+            },
+            {
+                id: 8,
+                titulo: "Watch Dogs 2",
+                genero: "Ação",
+                preco: "147,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.epicgames.com%2Foffer%2Fangelonia%2FWDA_StorePortrait_1200x1600_1200x1600-75d21fb44d647ad69967ae1bb0ab0cbc&f=1&nofb=1&ipt=e182d6395000d1b7da31949ba326b8d9b72d912de5986f1d632bb7bbba6ae304"
+            },
+            {
+                id: 9,
+                titulo: "Ratatouille SlotMachine",
+                genero: "Aposta",
+                preco: "100,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe8%2F01%2F49%2Fe801493d8099d44b98089ff9c668409a.jpg&f=1&nofb=1&ipt=c6edf824fc70fccb7e70f61869f5ad8817ff0cf594a78b588f0adda29396aba3"
+            },
+            {
+                id: 10,
+                titulo: "Cities Skylines",
+                genero: "Gerenciamento",
+                preco: "116,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.epicgames.com%2F6009be9994c2409099588cde6f3a5ed0%2Foffer%2FEGS_CitiesSkylines_ColossalOrder_S2-1200x1600-753257537706de74735d2bc3eb656b67.jpg&f=1&nofb=1&ipt=b5485ff42917d96e17425ff91cd8a5582a7d7ed9e44d8dd2fbecb6b65c480533"
+            },
+            {
+                id: 11,
+                titulo: "Subnautica",
+                genero: "Exploração",
+                preco: "124,50",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimage.api.playstation.com%2Fvulcan%2Fimg%2Frnd%2F202009%2F3006%2FC76j3lYg8BNBWJRSYtI2ONbo.png&f=1&nofb=1&ipt=312f967145a40f1af4f18bd731b5da1e27ae9feef0518e205029912c74ca42cf"
+            },
+            {
+                id: 12,
+                titulo: "Plants VS Zombies Garden Warfare 2",
+                genero: "Combate",
+                preco: "160,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimage.api.playstation.com%2Fcdn%2FUP0006%2FCUSA01975_00%2FfsEGkpvAvca9zLxCuPcOsaadfAeua4Vo.png&f=1&nofb=1&ipt=e593630f61a9edc200e4952c00e761b5f2b663734715eed2b3e9e01bec0f2eb6"
+            },
+            {
+                id: 13,
+                titulo: "Batman Lego 3",
+                genero: "Coperativo",
+                preco: "160,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.unrealengine.com%2FDiesel%2Fproductv2%2Flego-batman-3%2FEGS_WB_LEGO_Batman_3_G1_1920x1080_19_0911-1920x1080-61f0fad4278bd91964d79b264123d64127834445.jpg&f=1&nofb=1&ipt=ec2c695e74ba35577a03d5ad94d7bd988dd7db8b2e9ff493273ddf4e35fa65a5"
+            },
+        ];
+
+        const user_cart = JSON.parse(sessionStorage.getItem("user_cart")) || [];
+
+        const card_game = (game) => `
+        <div class="card_game" id="${game.id}">
+            <div class="card_game_infos">
+                <h1>${game.titulo}</h1>
+                <h4><b>Gênero:</b> ${game.genero}</h4>
+                <h4><b>Preço:</b> R$ ${game.preco}</h4>
+                <img src="${game.img_src}" height=300px>
+            </div>
+
+            <div class="card_game_actions">
+                <button class="button_pushcase">
+                    Adicionar
+                </button>
+            </div>
+        </div>
+        `;
+
+        const card_game_list = (game) => `
+        <div class="card_game_list" id="${game.id}">
+            <div class="card_game_list_infos">
+                <img src="${game.img_src}" height=300px>
+                <h2>${game.titulo}</h2>
+                <h3>R$ ${game.preco}</h3>
+            </div>
+
+            <div class="card_game_list_actions">
+                <button class="button_remove">
+                    Remover
+                </button>
+            </div>
+        </div>
+        `;
+
+        // Global functions
+        function randomize_array(arr)
+        {
+            let curr_i = arr.length;
+            let rand_i, t;
+            while(curr_i > 0){
+                rand_i = Math.floor(Math.random() * curr_i);
+                curr_i--;
+
+                t = arr[rand_i];
+                arr[rand_i] = arr[curr_i];
+                arr[curr_i] = t;
+            }
+        }
+
+        // HTML functions
+        function home_html()
+        {
+            return "Bem-vindo à Loja SPO, aquela que você pode olhar, mas não pode tocar!";
+        }
+
+        function catalog_html()
+        {
+            let games_html = [];
+            for(const i of bancoDeJogos){
+                games_html.push(card_game(i));
+            }
+            randomize_array(games_html);
+
+            let innerHTML = "";
+            for(const i of games_html){
+                innerHTML += i + "<br>";
+            }
+            return innerHTML;
+        }
+
+        function cart_html()
+        {
+            let innerHTML = "";
+            let game;
+            let tot = 0;
+            for(const i of user_cart){
+                for(const j of bancoDeJogos){
+                    if(j.id != i)
+                        continue;
+
+                    game = j;
+                    break;
+                }
+                innerHTML += card_game_list(game) + "<hr>";
+                tot += parseInt(game.preco);
+            }
+            return innerHTML + "<hr><br><hr>" + "Total: " + tot;
+        }
+
+        function ERROR404_html()
+        {
+            return "<div class=\"erro_404\"> <h1>ERRO 404</h1> </div>";
+        }
+
+
+        // Render functions
+        const container = document.getElementById('conteudo');
+        function render_home()
+        {
+            container.innerHTML = home_html();
+        }
+
+        function render_catalog()
+        {
+            container.innerHTML = catalog_html();
+            const button_pushcase = document.querySelectorAll(".button_pushcase");
+            for(const i of button_pushcase){
+                i.addEventListener('click', (e) => {
+                    const game_id = parseInt(e.target.parentElement.parentElement.id);
+                    if(!user_cart.includes(game_id)){
+                        user_cart.push(parseInt(game_id));
+                        e.target.innerHTML = "Remover";
+                        const jogo = bancoDeJogos.find(
+                            g => g.id === game_id
+                        );
+                        mostrarPopupCarrinho(jogo.titulo);
+
+                    }
+                    else {
+                        user_cart.splice(user_cart.indexOf(game_id), 1);
+                        e.target.innerHTML = "Adicionar";
+                    }
+                    sessionStorage.setItem("user_cart", JSON.stringify(user_cart));
+                });
+
+                const game_id = parseInt(i.parentElement.parentElement.id);
+                if(user_cart.includes(game_id)){
+                    i.innerHTML = "Remover";
+                }
+                else{
+                    i.innerHTML = "Adicionar";
+                }
+            }
+        }
+
+        function render_cart()
+        {
+            container.innerHTML = cart_html();
+            const button_remove = document.querySelectorAll(".button_remove");
+            for(const i of button_remove){
+                i.addEventListener('click', (e) => {
+                    const game_id = parseInt(e.target.parentElement.parentElement.id);
+                    user_cart.splice(user_cart.indexOf(game_id), 1);
+                    render_cart();
+                    sessionStorage.setItem("user_cart", JSON.stringify(user_cart));
+                });
+            }
+        }
+
+        function render_unknow_hash()
+        {
+            container.innerHTML = ERROR404_html();
+        }
+
+        function render_by_hash()
+        {
+            switch(window.location.hash){
+                case "#home":
+                    return render_home();
+                    break;
+
+                case "#catalogo":
+                    return render_catalog();
+                    break;
+
+                case "#carrinho":
+                    return render_cart();
+                    break;
+
+                default:
+                    return render_unknow_hash();
+                    break;
+            }
+        }
+
+
+
+        window.addEventListener('hashchange', (e) => {
+            render_by_hash();
+        });
+        render_by_hash();
+    </script>
+</body>
+</html>

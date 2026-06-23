@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>SPO Games - SPA</title>
+    <style>
+    *{
+        box-sizing:border-box;
+        cursor:crosshair;
+    }
+
+    body{
+        margin:0;
+        padding:0;
+        background:linear-gradient(45deg,#ff00ff,#00ffff,#ffff00,#ff0000);
+        background-size:400% 400%;
+        animation:caos 2s infinite;
+        font-family:"Comic Sans MS", cursive;
+        overflow-x:hidden;
+    }
+
+    @keyframes caos{
+        0%{background-position:0% 50%}
+        50%{background-position:100% 50%}
+        100%{background-position:0% 50%}
+    }
+
+    nav{
+        position:sticky;
+        top:0;
+        z-index:999;
+        background:black;
+        border:10px dotted lime;
+        padding:30px;
+        transform:rotate(-2deg);
+        box-shadow:20px 20px 0 red;
+    }
+
+    nav a{
+        color:#fff;
+        background:#ff00ff;
+        padding:20px;
+        margin:15px;
+        display:inline-block;
+        text-decoration:none;
+        font-size:25px;
+        border-radius:50%;
+        animation:pula 0.4s infinite alternate;
+    }
+
+    @keyframes pula{
+        from{transform:scale(1)}
+        to{transform:scale(1.3) rotate(10deg)}
+    }
+
+
+    #conteudo{
+        padding:40px;
+        min-height:100vh;
+    }
+
+
+    .card_game,
+    .card_game_list{
+
+        background:yellow;
+        border:15px ridge red;
+        margin:50px auto;
+        padding:30px;
+
+        width:90%;
+
+        transform:rotate(2deg);
+
+        box-shadow:
+        30px 30px 0 black,
+        -20px -20px 0 blue;
+
+        animation:tremer .3s infinite;
+    }
+
+
+    @keyframes tremer{
+
+        0%{transform:rotate(2deg)}
+        50%{transform:rotate(-3deg)}
+        100%{transform:rotate(2deg)}
+
+    }
+
+
+    .card_game img,
+    .card_game_list img{
+
+        width:300px;
+        height:300px;
+
+        object-fit:cover;
+
+        filter:
+        hue-rotate(90deg)
+        contrast(200%)
+        saturate(300%);
+
+    }
+
+
+    h1,h2,h3,h4{
+
+        text-shadow:
+        5px 5px 0 pink,
+        -5px -5px 0 cyan;
+
+    }
+
+
+    button{
+
+        background:red;
+        color:white;
+
+        font-size:30px;
+
+        padding:20px;
+
+        border:10px dashed white;
+
+        animation:
+        giro 1s infinite;
+
+    }
+
+
+    @keyframes giro{
+
+        from{
+            transform:rotate(0deg)
+        }
+
+        to{
+            transform:rotate(360deg)
+        }
+
+    }
+
+
+    /* POPUP */
+
+    .popup_caos{
+
+        position:fixed;
+
+        top:30%;
+        left:50%;
+
+        transform:
+        translate(-50%,-50%)
+        rotate(8deg);
+
+
+        background:#00ff00;
+
+        color:red;
+
+        border:20px solid purple;
+
+        padding:40px;
+
+        font-size:40px;
+
+        z-index:9999;
+
+        box-shadow:
+        0 0 50px black;
+
+
+        animation:
+        popupAnim .5s infinite alternate;
+
+    }
+
+
+    @keyframes popupAnim{
+
+        from{
+            scale:1;
+        }
+
+        to{
+            scale:1.2;
+        }
+
+    }
+
+
+    .erro_404{
+
+        background:black;
+        color:red;
+
+        padding:100px;
+
+        font-size:80px;
+
+        text-align:center;
+
+    }
+    </style>
+</head>
+<body>
+    <nav>
+        <button id="btn_caos">
+            ATIVAR MODO INFERNAL
+        </button>
+        <a href="#home">Início</a>
+        <a href="#catalogo">Catálogo de Jogos</a>
+        <a href="#carrinho">Carrinho</a>
+    </nav>
+    <main id="conteudo">
+        <!-- O conteúdo das rotas será injetado aqui pelo
+        JavaScript -->
+    </main>
+    <script>
+        // Global Vars
+        const bancoDeJogos = [
+            {
+                id: 1,
+                titulo: "Resident Evil 4 Remake",
+                genero: "Terror/Ação",
+                preco: "199,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic0.gamerantimages.com%2Fwordpress%2Fwp-content%2Fuploads%2F2023%2F01%2Fresident-evil-4-remake.jpg&f=1&nofb=1&ipt=c7303e5356d8d8d18ddec54b757a6b52c3da67912d85ce978be2e63e9d2c6539"
+            },
+            {
+                id: 2,
+                titulo: "Persona 3 Reload",
+                genero: "RPG",
+                preco: "349,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fstatic1.srcdn.com%2Fwordpress%2Fwp-content%2Fuploads%2Fsharedimages%2F2024%2F04%2Fpersona-3-reload.jpg&f=1&nofb=1&ipt=575b132db51565ca95fdab19e61facbbb420f2ecc1c872b592f6287f2825523c"
+            },
+            {
+                id: 3,
+                titulo: "EA Sports FC 24",
+                genero: "Esporte",
+                preco: "250,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpaperaccess.com%2Ffull%2F10482383.jpg&f=1&nofb=1&ipt=c7aa93fd36162fb3a053b8b4f54669d80186a226c3690e9651a289df813f8683"
+            },
+            {
+                id: 4,
+                titulo: "Minecraft BedRock&Java Edition",
+                genero: "Aventura",
+                preco: "150,00",
+                img_src: "https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Discover-our-games_MC-Vanilla-KeyArt_864x864.jpg"
+            },
+            {
+                id: 5,
+                titulo: "Civilization VI",
+                genero: "Estratégia 4X",
+                preco: "129,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets-prd.ignimgs.com%2F2021%2F12%2F14%2Fciv6-1639520169673.jpg&f=1&nofb=1&ipt=83ad109f401a78bc18c18e261a51ecdaa42889d131c185842b1610e5b173057f"
+            },
+            {
+                id: 6,
+                titulo: "Titanfall 2",
+                genero: "Combate",
+                preco: "89,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fthfvnext.bing.com%2Fth%2Fid%2FOIP.3YmIEFaS_xwS5tNXyuQzBwHaHa%3Fcb%3Dthfvnextfalcon2%26pid%3DApi&f=1&ipt=2b9188fd5d8c638d8fc77dbaf5ea82e87f6aa5e16ef35673dd58ef1d7b448eb8&ipo=images"
+            },
+            {
+                id: 7,
+                titulo: "Dead Cells",
+                genero: "Roguelike",
+                preco: "47,50",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fassets1.ignimgs.com%2F2019%2F06%2F10%2Fdead-cells---button-fin-1560125633132.jpg%3Ffit%3Dbounds%26dpr%3D1%26quality%3D75%26width%3D188px&f=1&nofb=1&ipt=6525931204bacd424d916437f78418080e2cf2f78377c944c9e2159958961fd4"
+            },
+            {
+                id: 8,
+                titulo: "Watch Dogs 2",
+                genero: "Ação",
+                preco: "147,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.epicgames.com%2Foffer%2Fangelonia%2FWDA_StorePortrait_1200x1600_1200x1600-75d21fb44d647ad69967ae1bb0ab0cbc&f=1&nofb=1&ipt=e182d6395000d1b7da31949ba326b8d9b72d912de5986f1d632bb7bbba6ae304"
+            },
+            {
+                id: 9,
+                titulo: "Ratatouille SlotMachine",
+                genero: "Aposta",
+                preco: "100,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fi.pinimg.com%2Foriginals%2Fe8%2F01%2F49%2Fe801493d8099d44b98089ff9c668409a.jpg&f=1&nofb=1&ipt=c6edf824fc70fccb7e70f61869f5ad8817ff0cf594a78b588f0adda29396aba3"
+            },
+            {
+                id: 10,
+                titulo: "Cities Skylines",
+                genero: "Gerenciamento",
+                preco: "116,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn1.epicgames.com%2F6009be9994c2409099588cde6f3a5ed0%2Foffer%2FEGS_CitiesSkylines_ColossalOrder_S2-1200x1600-753257537706de74735d2bc3eb656b67.jpg&f=1&nofb=1&ipt=b5485ff42917d96e17425ff91cd8a5582a7d7ed9e44d8dd2fbecb6b65c480533"
+            },
+            {
+                id: 11,
+                titulo: "Subnautica",
+                genero: "Exploração",
+                preco: "124,50",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimage.api.playstation.com%2Fvulcan%2Fimg%2Frnd%2F202009%2F3006%2FC76j3lYg8BNBWJRSYtI2ONbo.png&f=1&nofb=1&ipt=312f967145a40f1af4f18bd731b5da1e27ae9feef0518e205029912c74ca42cf"
+            },
+            {
+                id: 12,
+                titulo: "Plants VS Zombies Garden Warfare 2",
+                genero: "Combate",
+                preco: "160,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimage.api.playstation.com%2Fcdn%2FUP0006%2FCUSA01975_00%2FfsEGkpvAvca9zLxCuPcOsaadfAeua4Vo.png&f=1&nofb=1&ipt=e593630f61a9edc200e4952c00e761b5f2b663734715eed2b3e9e01bec0f2eb6"
+            },
+            {
+                id: 13,
+                titulo: "Batman Lego 3",
+                genero: "Coperativo",
+                preco: "160,00",
+                img_src: "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn2.unrealengine.com%2FDiesel%2Fproductv2%2Flego-batman-3%2FEGS_WB_LEGO_Batman_3_G1_1920x1080_19_0911-1920x1080-61f0fad4278bd91964d79b264123d64127834445.jpg&f=1&nofb=1&ipt=ec2c695e74ba35577a03d5ad94d7bd988dd7db8b2e9ff493273ddf4e35fa65a5"
+            },
+        ];
+
+        const user_cart = JSON.parse(sessionStorage.getItem("user_cart")) || [];
+
+        const card_game = (game) => `
+        <div class="card_game" id="${game.id}">
+            <div class="card_game_infos">
+                <h1>${game.titulo}</h1>
+                <h4><b>Gênero:</b> ${game.genero}</h4>
+                <h4><b>Preço:</b> R$ ${game.preco}</h4>
+                <img src="${game.img_src}" height=300px>
+            </div>
+
+            <div class="card_game_actions">
+                <button class="button_pushcase">
+                    Adicionar
+                </button>
+            </div>
+        </div>
+        `;
+
+        const card_game_list = (game) => `
+        <div class="card_game_list" id="${game.id}">
+            <div class="card_game_list_infos">
+                <img src="${game.img_src}" height=300px>
+                <h2>${game.titulo}</h2>
+                <h3>R$ ${game.preco}</h3>
+            </div>
+
+            <div class="card_game_list_actions">
+                <button class="button_remove">
+                    Remover
+                </button>
+            </div>
+        </div>
+        `;
+
+        // Global functions
+        function randomize_array(arr)
+        {
+            let curr_i = arr.length;
+            let rand_i, t;
+            while(curr_i > 0){
+                rand_i = Math.floor(Math.random() * curr_i);
+                curr_i--;
+
+                t = arr[rand_i];
+                arr[rand_i] = arr[curr_i];
+                arr[curr_i] = t;
+            }
+        }
+
+        // HTML functions
+        function home_html()
+        {
+            return "Bem-vindo à Loja SPO, aquela que você pode olhar, mas não pode tocar!";
+        }
+
+        function catalog_html()
+        {
+            let games_html = [];
+            for(const i of bancoDeJogos){
+                games_html.push(card_game(i));
+            }
+            randomize_array(games_html);
+
+            let innerHTML = "";
+            for(const i of games_html){
+                innerHTML += i + "<br>";
+            }
+            return innerHTML;
+        }
+
+        function cart_html()
+        {
+            let innerHTML = "";
+            let game;
+            let tot = 0;
+            for(const i of user_cart){
+                for(const j of bancoDeJogos){
+                    if(j.id != i)
+                        continue;
+
+                    game = j;
+                    break;
+                }
+                innerHTML += card_game_list(game) + "<hr>";
+                tot += parseInt(game.preco);
+            }
+            return innerHTML + "<hr><br><hr>" + "Total: " + tot;
+        }
+
+        function ERROR404_html()
+        {
+            return "<div class=\"erro_404\"> <h1>ERRO 404</h1> </div>";
+        }
+
+
+        // Render functions
+        let temp = 1000;
+        function iniciarInfernoDeAnuncios(){
+            setTimeout(()=>{
+                const anuncio = document.createElement("div");
+                anuncio.className = "popup_caos";
+                anuncio.style.top =
+                    Math.random()*100 + "%";
+
+                anuncio.style.left =
+                    Math.random()*100 + "%";
+
+
+                anuncio.innerHTML = `
+                🚨 ANÚNCIO INCRÍVEL 🚨
+                <br><br>
+                VOCÊ GANHOU UM DESCONTO QUE NÃO EXISTE!!!
+                <br><br>
+                <button onclick="this.parentElement.remove()">
+                FECHAR (TALVEZ)
+                </button>
+                `;
+                document.body.appendChild(anuncio);
+
+
+                if(temp > 20){
+                    temp -= 20;
+                }
+                console.log(temp);
+                iniciarInfernoDeAnuncios();
+            }, temp);
+        }
+
+        const container = document.getElementById('conteudo');
+        function render_home()
+        {
+            container.innerHTML = home_html();
+        }
+
+        function mostrarPopupCarrinho(nome){
+            const popup = document.createElement("div");
+
+            popup.className="popup_caos";
+
+            popup.innerHTML =
+            `
+            🎮 ITEM SALVO COM SUCESSO!!! 🎮
+            <br><br>
+            ${nome}
+            <br><br>
+            FOI JOGADO NO CARRINHO!!!
+            `;
+
+
+            document.body.appendChild(popup);
+
+
+            setTimeout(()=>{
+
+                popup.remove();
+
+            },2500);
+
+        }
+
+        function render_catalog()
+        {
+            container.innerHTML = catalog_html();
+            const button_pushcase = document.querySelectorAll(".button_pushcase");
+            for(const i of button_pushcase){
+                i.addEventListener('click', (e) => {
+                    const game_id = parseInt(e.target.parentElement.parentElement.id);
+                    if(!user_cart.includes(game_id)){
+                        user_cart.push(parseInt(game_id));
+                        e.target.innerHTML = "Remover";
+                        const jogo = bancoDeJogos.find(
+                            g => g.id === game_id
+                        );
+                        mostrarPopupCarrinho(jogo.titulo);
+
+                    }
+                    else {
+                        user_cart.splice(user_cart.indexOf(game_id), 1);
+                        e.target.innerHTML = "Adicionar";
+                    }
+                    sessionStorage.setItem("user_cart", JSON.stringify(user_cart));
+                });
+
+                const game_id = parseInt(i.parentElement.parentElement.id);
+                if(user_cart.includes(game_id)){
+                    i.innerHTML = "Remover";
+                }
+                else{
+                    i.innerHTML = "Adicionar";
+                }
+            }
+        }
+
+        function render_cart()
+        {
+            container.innerHTML = cart_html();
+            const button_remove = document.querySelectorAll(".button_remove");
+            for(const i of button_remove){
+                i.addEventListener('click', (e) => {
+                    const game_id = parseInt(e.target.parentElement.parentElement.id);
+                    user_cart.splice(user_cart.indexOf(game_id), 1);
+                    render_cart();
+                    sessionStorage.setItem("user_cart", JSON.stringify(user_cart));
+                });
+            }
+        }
+
+        function render_unknow_hash()
+        {
+            container.innerHTML = ERROR404_html();
+        }
+
+        function render_by_hash()
+        {
+            switch(window.location.hash){
+                case "#home":
+                    return render_home();
+                    break;
+
+                case "#catalogo":
+                    return render_catalog();
+                    break;
+
+                case "#carrinho":
+                    return render_cart();
+                    break;
+
+                default:
+                    return render_unknow_hash();
+                    break;
+            }
+        }
+
+
+
+        window.addEventListener('hashchange', (e) => {
+            render_by_hash();
+        });
+        render_by_hash();
+
+        window.addEventListener("load", ()=>{
+            render_by_hash();
+
+            iniciarInfernoDeAnuncios();
+
+        });
+        
+        // Referência para a área principal da tela
+        // SUAS TAREFAS:
+        // 1. Crie uma função para gerar o HTML do catálogo
+        // percorrendo o array 'bancoDeJogos'.
+        // 2. Crie o objeto 'rotas' contendo o HTML de #home, do
+        /// #catalogo e do #carrinho.
+        // 3. Crie a função de navegação para ler o
+        // window.location.hash e injetar no 'container'.
+        // 4. Adicione os Event Listeners necessários
+        // ('hashchange' e 'load').
+    </script>
+</body>
+</html>
